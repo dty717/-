@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <style>
+        body {
+            display: -ms-flexbox;
+            display: -webkit-box;
+            display: flex;
+            -ms-flex-align: center;
+            -ms-flex-pack: center;
+            -webkit-box-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            justify-content: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
+
+        #tip {
+            position: absolute;
+            /* display: none; */
+        }
+        canvas{
+            cursor: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMDAwMDAwMEBAMFBQQFBQcGBgYGBwoHCAcIBwoPCgsKCgsKDw4QDQwNEA4YExERExgcGBYYHCIeHiIrKSs4OEv/wAALCAAFAAUBAREA/8QAMAABAAAAAAAAAAAAAAAAAAAABhAAAQIHAQAAAAAAAAAAAAAAAwQHAAECBQYREjL/2gAIAQEAAD8AMtU02WK8ud4IXevSUiW9UiKUVM+lNWyT7JsnqP/Z'),auto
+        }
+        ​
+    </style>
+    <title>Hello, world!</title>
+</head>
+
+<body>
+
+    <div class="card text-center "  id='content'>
+        <canvas id="canvas" ></canvas>
+        <span class="badge badge-primary" id="output"></span>
+        <div class="alert" id="alert">
+            &nbsp;&nbsp;&nbsp;
+        </div>
+    </div>
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script>
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+
+
+        var img = new Image();
+        img.onload = function () {
+            //canvas.style.width=this.width
+            //canvas.style.height=this.height
+            document.getElementById('content').style.width=this.width+"px"
+            canvas.width = this.width
+            canvas.height = this.height
+
+            ctx.drawImage(img, 0, 0);
+            
+        };
+        img.crossOrigin = "Anonymous";
+
+        img.src = 'https://i.imgur.com/3Iu3v1w.gif';
+
+                
+        $('canvas').click(function(e){
+            alert(event.offsetX+','+event.offsetY)
+        })
+        $(function () {
+            
+            $('canvas').mousemove(function (e) {
+                
+                var pixelData = canvas.getContext('2d').getImageData(event.offsetX, event.offsetY, 1, 1).data;
+
+                $('#output').html('R: ' + pixelData[0] + '    G: ' + pixelData[1] + '    B: ' + pixelData[2] + '    A: ' + pixelData[3]);
+                $("#alert").css("background-color", "rgb("+pixelData[0]+","+pixelData[1]+","+pixelData[2]+")");
+                
+
+
+            });
+
+
+
+        });
+
+    </script>
+</body>
+
+</html>
