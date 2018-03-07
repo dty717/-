@@ -61,6 +61,7 @@
         crossorigin="anonymous"></script>
     <script src="similarColor.js"></script>
     <script src="Close pair of points/closePoint.js"></script>
+    <script src="function/LeastSquares.js"></script>
     <script>
         var canvas = document.getElementById('canvas');
         var ctx = canvas.getContext('2d');
@@ -80,17 +81,65 @@
         };
         img.crossOrigin = "Anonymous";
 
-        img.src = 'http://106.14.118.135:8088/pic/1.jpg';
+        img.src = 'http://127.0.0.1:8080/pic/捕获.PNG';
 
-        var similar, close;
+        var similar;
         $('canvas').click(function (e) {
+            return
             if (!similar)
                 similar = new similarColor(pixelData[0], pixelData[1], pixelData[2]);
             similar.closeArea(ctx, e.offsetX, e.offsetY);
             //alert(event.offsetX + ',' + event.offsetY)
         })
         $('canvas').dblclick(function (e) {
-            closePoint(event.offsetX, event.offsetY,ctx);
+           /*  pixelData = ctx.getImageData(event.offsetX, event.offsetY, 1, 1).data;
+            leastred = new LeastSquares(event.offsetX, event.offsetY, pixelData[0]);
+            leastgreen = new LeastSquares(event.offsetX, event.offsetY, pixelData[1]);
+            leastblue= new LeastSquares(event.offsetX, event.offsetY, pixelData[2]);
+            var x1=event.offsetX-5;
+            var x2=event.offsetX+5;
+            var y1=event.offsetY-5;
+            var y2=event.offsetY+5;
+            
+            for (var i = x1; i < x2; i++) {
+                for (var j = y1; j < y2; j++) {
+                    var pixelData = ctx.getImageData(i, j, 1, 1).data;
+                    leastred.observe(i,j,pixelData[0])
+                    leastgreen.observe(i,j,pixelData[1])
+                    leastblue.observe(i,j,pixelData[2])
+                }
+            }
+            console.log(leastred.caculateM()*leastred.caculateM()+leastred.caculateN()*leastred.caculateN(),
+            leastgreen.caculateM()*leastgreen.caculateM()+leastgreen.caculateN()*leastgreen.caculateN(),
+            leastblue.caculateM()*leastblue.caculateM()+leastblue.caculateN()*leastblue.caculateN())
+             
+            if(leastred.caculateM()*leastred.caculateM()+leastred.caculateN()*leastred.caculateN()+
+                leastgreen.caculateM()*leastgreen.caculateM()+leastgreen.caculateN()*leastgreen.caculateN()+
+                leastblue.caculateM()*leastblue.caculateM()+leastblue.caculateN()*leastblue.caculateN()>20)
+                return;
+
+            ctx.fillRect(event.offsetX, event.offsetY, 1, 1);
+            return;
+            */
+            test2(event.offsetX,event.offsetY,ctx)
+            return;
+            ctx.strokeStyle = '#ff0000';
+            ctx.beginPath();
+            ctx.moveTo(event.offsetX, event.offsetY);
+            ctx.lineTo(leastred.caculateM()*100+event.offsetX, event.offsetY+leastred.caculateN()*100);
+            ctx.stroke();
+            ctx.strokeStyle = 'green';
+            ctx.beginPath();
+            ctx.moveTo(event.offsetX, event.offsetY);
+            ctx.lineTo(leastgreen.caculateM()*100+event.offsetX, event.offsetY+leastgreen.caculateN()*100);
+            ctx.stroke();
+            ctx.strokeStyle = 'blue';
+            ctx.beginPath();
+            ctx.moveTo(event.offsetX, event.offsetY);
+            ctx.lineTo(leastblue.caculateM()*100+event.offsetX, event.offsetY+leastblue.caculateN()*100);
+            ctx.stroke();
+            //closePoint(event.offsetX, event.offsetY, ctx);
+
         })
         var pixelData;
         $(function () {
