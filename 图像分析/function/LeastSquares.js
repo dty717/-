@@ -52,28 +52,33 @@ function test(x,y,ctx){
         leastblue.caculateM()*leastblue.caculateM()+leastblue.caculateN()*leastblue.caculateN()>20)
         return true;
 
-    //ctx.fillRect(x, y, 1, 1);
+
+	//ctx.fillRect(x, y, 1, 1);
     return false;
 }
+
+var pic_r=300;
 
 function test2(x,y,ctx){
     var paintX=[];
     var paintY=[];
-    var r=30;
+	var r=pic_r;
     for(var i=x-r;i<x+r;i++){
         for(var j=y-r;j<y+r;j++){
             if(!test(i,j,ctx)){
                 paintX.push(i);
                 paintY.push(j);
             }
-            
         }
     }
     ctx.fillStyle='white';
     for(var i=0;i<paintX.length;i++){
         ctx.fillRect(paintX[i], paintY[i], 1, 1);
     }
-    alert('finish')
+    if(makeLine){
+		makeLine(x,y,r,ctx);
+	}
+	alert('finish')
 }
 
 

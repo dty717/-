@@ -61,7 +61,9 @@
         crossorigin="anonymous"></script>
     <script src="similarColor.js"></script>
     <script src="Close pair of points/closePoint.js"></script>
+    <script src="function/makeLine.js"></script>
     <script src="function/LeastSquares.js"></script>
+
     <script>
         var canvas = document.getElementById('canvas');
         var ctx = canvas.getContext('2d');
@@ -81,8 +83,7 @@
         };
         img.crossOrigin = "Anonymous";
 
-        img.src = 'http://127.0.0.1:8080/pic/捕获.PNG';
-
+        img.src ="https://avatars3.githubusercontent.com/u/302108"
         var similar;
         $('canvas').click(function (e) {
             return
