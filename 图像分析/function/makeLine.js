@@ -1,7 +1,7 @@
 function makeLine(x,y,r,ctx){
     var paintX=[];
     var paintY=[];
-	var mark=12;
+	var mark=1;
     for(var i=x-r;i<x+r;i++){
         var start=-1;
 		for(var j=y-r;j<y+r;j++){
@@ -14,7 +14,9 @@ function makeLine(x,y,r,ctx){
 				if(start!=-1){
 					if(j-start>mark){
 						paintX.push(i);
-						paintY.push((start+j)/2)
+						paintY.push(start);
+						paintX.push(i);
+						paintY.push(j);
 					}
 					start=-1;					
 				}		
@@ -32,7 +34,9 @@ function makeLine(x,y,r,ctx){
 			}else{
 				if(start!=-1){
 					if(i-start>mark){
-						paintX.push((start+i)/2);
+						paintX.push(start);
+						paintY.push(j);
+						paintX.push(i);
 						paintY.push(j);
 					}
 					start=-1;
@@ -45,6 +49,8 @@ function makeLine(x,y,r,ctx){
 	ctx.fillRect(x-r,y-r, 2*r, 2*r);
 	ctx.fillStyle='red';
 	for(var i=0;i<paintX.length;i++){
+		if(paintX[i]<2||paintY[i]<2)
+			continue
         ctx.fillRect(paintX[i], paintY[i], 1, 1);
     }	
 	

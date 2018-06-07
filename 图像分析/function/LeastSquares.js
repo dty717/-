@@ -57,7 +57,7 @@ function test(x,y,ctx){
     return false;
 }
 
-var pic_r=300;
+var pic_r=80;
 
 function test2(x,y,ctx){
     var paintX=[];
