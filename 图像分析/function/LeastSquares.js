@@ -59,7 +59,7 @@ function test(x,y,ctx){
 
 var pic_r=80;
 
-function test2(x,y,ctx){
+function test2(x,y,ctx,image){
     var paintX=[];
     var paintY=[];
 	var r=pic_r;
@@ -76,7 +76,7 @@ function test2(x,y,ctx){
         ctx.fillRect(paintX[i], paintY[i], 1, 1);
     }
     if(makeLine){
-		makeLine(x,y,r,ctx);
+		makeLine(x,y,r,ctx,image,paintX,paintY);
 	}
 	alert('finish')
 }
