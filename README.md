@@ -9,5 +9,5 @@ html/style.html 中显示的是生产的多个过程的分解
 
 # 图像分析
 
-![alt text](https://github.com/dty717/auto-work/blob/master/%E5%9B%BE%E5%83%8F%E5%88%86%E6%9E%90/6.7.png)
-![alt text](https://github.com/dty717/auto-work/blob/master/%E5%9B%BE%E5%83%8F%E5%88%86%E6%9E%90/6.7_test.png)
+![alt text](https://github.com/dty717/auto-work/blob/master/%E5%9B%BE%E5%83%8F%E5%88%86%E6%9E%90/picture/6.7.png)
+![alt text](https://github.com/dty717/auto-work/blob/master/%E5%9B%BE%E5%83%8F%E5%88%86%E6%9E%90/picture/6.7_test.png)
