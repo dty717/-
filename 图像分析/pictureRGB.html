@@ -37,6 +37,11 @@
         ​
     </style>
     <title>Hello, world!</title>
+    
+    
+
+    
+    
 </head>
 
 <body>
@@ -44,7 +49,7 @@
     <div class="card text-center " id='content'>
         <canvas id="canvas"></canvas>
         <span class="badge badge-primary" id="output"></span>
-        <div class="alert" id="alert">
+        <div class="rgbShow" id="rgbShow">
             &nbsp;&nbsp;&nbsp;
         </div>
     </div>
@@ -63,13 +68,14 @@
     <script src="Close pair of points/closePoint.js"></script>
     <script src="function/makeLine.js"></script>
     <script src="function/LeastSquares.js"></script>
+    <script src="background/background.js"></script>
 
     <script>
 
         var canvas = document.getElementById('canvas');
         var ctx = canvas.getContext('2d');
 		
-		var img2;
+		//var img2;
         var img = new Image();
         img.onload = function () {
             //canvas.style.width=this.width
@@ -79,11 +85,19 @@
             canvas.width = this.width
             canvas.height = this.height
             ctx.drawImage(img, 0, 0);
-			img2=canvas.toDataURL("image/png");
+            /*
+                ctx.font="100px 宋体"
+                ctx.fillText("212的发生\r\n12当时的打翻",100,100)
+                ctx.fillText("212acSDS傅",300,400)
+            */
+			//img2=canvas.toDataURL("image/png");
 
 		};
+		
+        
         img.crossOrigin = "Anonymous";
-
+        
+        //img.src="picture/20180824120113.jpg";
         img.src ="https://dty717.github.io/auto-work/picture/20180824123623.jpg"
         var similar;
         $('canvas').click(function (e) {
@@ -93,6 +107,30 @@
             similar.closeArea(ctx, e.offsetX, e.offsetY);
             //alert(event.offsetX + ',' + event.offsetY)
         })
+        $('body').keypress(function (e) {
+            console.log(e);
+            if(e.key=="p"){
+                _function=backgroundFunction;
+            }else{
+                _function=similarColorFunction;
+            }
+			//test2(m1,m2,ctx)           
+        })
+        var _function
+        
+        var similarColorFunction=function(event,ctx){
+            var m1=event.offsetX;
+			var m2=event.offsetY;
+			test2(m1,m2,ctx)
+        };
+        var backgroundFunction=function(event,ctx){
+            //
+            backgroundFunctionColor(event,ctx)
+            //console.log(_function);
+        }
+        
+        
+        _function=backgroundFunction;
         $('canvas').dblclick(function (e) {
            /*  pixelData = ctx.getImageData(event.offsetX, event.offsetY, 1, 1).data;
             leastred = new LeastSquares(event.offsetX, event.offsetY, pixelData[0]);
@@ -123,19 +161,8 @@
             ctx.fillRect(event.offsetX, event.offsetY, 1, 1);
             return;
             */
-			var m1=event.offsetX;
-			var m2=event.offsetY;
-			/*
-			var image = new Image();
 			
-			image.src=img2
-			
-			
-			image.onload=function(){
-				console.log(m1,m2,ctx)
-			}*/
-			test2(m1,m2,ctx)
-			
+			_function(event,ctx);
 			
 			
             return;
@@ -165,7 +192,7 @@
                 pixelData = ctx.getImageData(event.offsetX, event.offsetY, 1, 1).data;
 
                 $('#output').html('R: ' + pixelData[0] + '    G: ' + pixelData[1] + '    B: ' + pixelData[2] + '    A: ' + pixelData[3]);
-                $("#alert").css("background-color", "rgb(" + pixelData[0] + "," + pixelData[1] + "," + pixelData[2] + ")");
+                $("#rgbShow").css("background-color", "rgb(" + pixelData[0] + "," + pixelData[1] + "," + pixelData[2] + ")");
 
             });
 
