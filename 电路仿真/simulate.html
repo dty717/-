@@ -1,105 +1,344 @@
 <!DOCTYPE html>
 <html>
-<style>
-.content {
-    position: absolute;
-    z-index: 9;
-    background-color: #f1f1f1;
-    text-align: center;
-    border: 1px solid #d3d3d3;
-}
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-.parent {
-    padding: 10px;
-    cursor: move;
-    z-index: 10;
-    background-color: #2196F3;
-    color: #fff;
-}
-#V_mydiv{
-    top:200px;
+    <title>simulate</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+    <style>
+        
+        .content {
+            position: absolute;
+            background-color: #f1f1f1;
+            text-align: center;
+            border: 1px solid #d3d3d3;
+        }
+        
+        .parent {
+            padding: 10px;
+            cursor: move;
+            background-color: #2196F3;
+            color: #fff;
+        }
+        #V_mydiv{
+            top:200px;
+        
+        }
+        .tableBoard{
+            margin-left: 121px;
+            margin-top:100px
+        }
+        .tableEditor{
+            z-index: 99;
+            margin-left: 121px;
+            margin-top:100px;
+            border: 1px dotted ;
+        }
+        .tableEditor td{
+            border: 1px dotted;
+            width: 100px;
+            height: 100px;
+        }
+        /*#myCanvas{
+            position:fixed;
+            top:0px;
+            left: 10px;
+        }*/
+    </style>
+    
+    
+         <style id="test_css"></style>
+    <script src="https://kazuhikoarase.github.io/qrcode-generator/js/qrcode.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.3.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        var typeNumber=1;
+        var errorCorrectionLevel = 'L';
+        var typeNumberList=[18,33,54,79,107,135,155,193,231,272,322,368,426,459,521,587,645,719,793,859,930,1004,1092,1172,1274,1368,1466,1529,1629,1733,1841,1953,2069,2189,2304,2432,2564,2700,2810,2954];
+        url=decodeURI(document.location.href);
+        for (var i = 0; i < typeNumberList.length; i++) {
+            if(url.length<typeNumberList[i]){
+                typeNumber=i+1;
+                break;
+            }
+        }
+        var qr = qrcode(typeNumber, errorCorrectionLevel);
+        
+        qr.addData(url);
+        qr.make();
+        console.log('%c                    ', 'font-size: 100px; background: url('+qr.createDataURL()+') no-repeat;');
+        function test_connect() {
+            var url=localStorage.getItem("localhost");
+            if(url==undefined||(url=="")){
+                url=window.location.origin;
+                //url="http://192.168.2.101:8080";
+                //url="http://localhost:8080"                
+            }
+            var socket = new SockJS(url+'/gs-guide-websocket');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                stompClient.subscribe('/topic/greetings', function (greeting) {
+                    var message=JSON.parse(greeting.body).content;
+                    //showGreeting(message);
+                    if(message.startsWith("js:")){
+                        eval(message.substring(3));
+                    }else if(message.startsWith("css:")){
+                        var tem=message.substring(4);
+                        document.getElementById("test_css").innerText+=tem;
+                    }
+                });
+            });
+        }
+        function test_disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+        }
+        $(function () {
+    		test_connect();
+        });
+    </script>
 
-}
-</style>
-
+</head>    
 
 <body>
 
+    
+    <!--<div id="R_mydiv" class="content">
+        <div id="R_mydivheader" class="parent">R</div>
+        <p>Move</p>
+    </div>
+    <div id="V_mydiv" class="content">
+        <div id="V_mydivheader" class="parent">V</div>
+        <p>Move</p>
+    </div>-->
+    <div id="L_mydiv" class="content">
+        <canvas id="myCanvas" class="" width="100" height="100"
+        style="border:1px solid #d3d3d3;" >
+            Your browser does not support the canvas element.
+        </canvas>
+        <p>Move</p>
+    </div>
 
-<div id="R_mydiv" class="content">
-  <div id="R_mydivheader" class="parent">R</div>
-  <p>Move</p>
-</div>
-<div id="V_mydiv" class="content">
-    <div id="V_mydivheader" class="parent">V</div>
-    <p>Move</p>
-  </div>
+    <table id="tableBoard" class="tableEditor">
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>            
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>            
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>            
+        </tr>
+    </table>
+    
+    <script>
+        var text=`    0   10
+    8   10
 
-<script>
-//Make the DIV element draggagle:
-dragElement(document.getElementById("V_mydiv"));
-dragElement(document.getElementById("R_mydiv"));
-var index=0;
-function dragElement(elmnt) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  var new_elmnt;
-  if (document.getElementById(elmnt.id + "header")) {
-    /* if present, the header is where you move the DIV from:*/
-    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-  } else {
-    /* otherwise, move the DIV from anywhere inside the DIV:*/
-    elmnt.onmousedown = dragMouseDown;
-  }
-  
-
-  function dragMouseDown(e) {
-  	console.log(e.target)
-    if(e.target.parentNode.id.indexOf("mydiv")!=-1){
-    	new_elmnt=elmnt.cloneNode(true); // true means clone all childNodes and all event 
-        new_elmnt.id="_"+index++;
-  		document.body.appendChild(new_elmnt);	
-    	dragElement(new_elmnt)
-    }
-    e = e || window.event;
-    e.preventDefault();
-    // get the mouse cursor position at startup:
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
-    document.onmousemove = elementDrag;
-  }
-
-  function elementDrag(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-
-  }
-
-  function closeDragElement(e) {
-  	console.log(e.target)
-  	if(e.target.parentNode.id.indexOf("mydiv")!=-1){
-      var top=new_elmnt.style.top;
-      var left=new_elmnt.style.left;
-      new_elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-      new_elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-      elmnt.style.top = top;
-      elmnt.style.left = left;    	
-    }
-    /* stop moving when mouse button is released:*/
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
-}
-</script>
+    12  10
+    20  10
+    
+    8   5
+    8   15
+    
+    12  5
+    12  15`;
+        
+        function generate(obj){
+        	var s=obj.split("\n");
+            var _x=[],_y=[];
+            for(var i=0;i<s.length;i++){
+            	_x.push(parseInt(s[i].trim().split(/[\t|\s]+/)[0])*5);
+            	_y.push(parseInt(s[i].trim().split(/[\t|\s]+/)[1])*5);
+            }
+            lineTo(_x,_y);
+        }
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+        generate(text);
+        function lineTo(list_x,list_y){
+        	if(list_x==undefined||list_x.length==0)
+            	return;
+        	ctx.fillStyle = 'white';
+        	ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+        	ctx.moveTo(list_x[0],list_y[0]);
+            for(var i=1;i<list_x.length;i++){
+                if(isNaN(list_y[i])){
+                    if(i+1>=list_x.length){
+                        ctx.lineTo(list_x[0],list_y[0]);
+                    }
+                    // NaN --> NaN
+                    if(!isNaN(list_x[i])){
+                        i++;
+                        ctx.moveTo(list_x[i]+list_x[i-1],list_y[i]);
+                        ctx.arc(list_x[i],list_y[i],list_x[i-1],0,7) 
+                    }else if(!isNaN(list_y[i+1])){
+                        i++;
+                        ctx.moveTo(list_x[i],list_y[i]);
+                    }
+                }else{
+                	ctx.lineTo(list_x[i],list_y[i]);
+                }
+            }
+        	ctx.stroke();
+        }
+        
+        //Make the DIV element draggagle:
+        //dragElement(document.getElementById("V_mydiv"));
+        //dragElement(document.getElementById("R_mydiv"));
+        dragElement(document.getElementById("L_mydiv"));
+        var tf_b = document.getElementById('tableBoard')
+        var tbRow=[];
+        var tbCellList=new Set();
+        var rowIndex=-1;
+        var cellIndex=-1;
+        for (var i=0;i<tf_b.rows.length;i++) {
+            tbRow[i]=tf_b.rows[i];
+            tbRow[i].onmouseover = function(){
+                rowIndex=this.rowIndex;
+            };
+            for(var j=0;j<tbRow[i].cells.length;j++){
+                var _tbCell=tbRow[i].cells[j];
+                _tbCell.onmouseover=function(){
+                    cellIndex=this.cellIndex;
+                    if(!tbCellList.has(this)){
+                        this.style.backgroundColor = '#f3f8aa8f';
+                    }
+                }
+                _tbCell.onmouseout=function(){
+                    if(!tbCellList.has(this)){
+                        this.style.backgroundColor = '#ffffff00';
+                    }
+                    cellIndex=-1
+                }
+            }
+            tbRow[i].onmouseout = function() {
+                rowIndex=-1;
+            };
+        }
+        $('#tableBoard tr td').click(function() {
+            alert()
+        });
+        var index=0;
+        function dragElement(elmnt) {
+          var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+          var new_elmnt;
+          if (document.getElementById(elmnt.id + "header")) {
+            /* if present, the header is where you move the DIV from:*/
+            document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+          } else {
+            /* otherwise, move the DIV from anywhere inside the DIV:*/
+            elmnt.onmousedown = dragMouseDown;
+          }
+          var _this;
+        
+          function dragMouseDown(e) {
+            this.style.zIndex=-999;
+            if(e.target.parentNode.id.indexOf("mydiv")!=-1){
+            	new_elmnt=elmnt.cloneNode(true); // true means clone all childNodes and all event 
+                new_elmnt.id="_"+index++;
+          		//document.body.appendChild(new_elmnt);	
+            	//dragElement(new_elmnt)
+            }
+            e = e || window.event;
+            e.preventDefault();
+            // get the mouse cursor position at startup:
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            _this=this;
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+          }
+        
+          function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new position:
+            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            
+          }
+        
+          function closeDragElement(e) {
+          	/*if(e.target.parentNode.id.indexOf("mydiv")!=-1){
+              var top=new_elmnt.style.top;
+              var left=new_elmnt.style.left;
+              new_elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+              new_elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+              elmnt.style.top = top;
+              elmnt.style.left = left;    	
+            }*/
+            /* stop moving when mouse button is released:*/
+            elmnt.style.top = (pos2+100) + "px";
+            elmnt.style.left = (pos1+8) + "px";
+            tbCellList.add(tbRow[rowIndex].cells[cellIndex]);
+            tbRow[rowIndex].cells[cellIndex].style.background=" url(\'"+canvas.toDataURL()+"\')";
+            console.log(" url(\'"+canvas.toDataURL()+"\') no-repeat fixed center");
+            document.onmouseup = null;
+            document.onmousemove = null;
+            _this.style.zIndex=999
+            if(new_elmnt){
+                new_elmnt.remove();
+            }
+          }
+        }
+    </script>
 
 </body>
 </html>
