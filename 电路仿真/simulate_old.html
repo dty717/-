@@ -7,6 +7,8 @@
     background-color: #f1f1f1;
     text-align: center;
     border: 1px solid #d3d3d3;
+    resize: both;
+    overflow: auto;
 }
 
 .parent {
@@ -24,7 +26,6 @@
 
 
 <body>
-
 
 <div id="R_mydiv" class="content">
   <div id="R_mydivheader" class="parent">R</div>
@@ -53,7 +54,6 @@ function dragElement(elmnt) {
   
 
   function dragMouseDown(e) {
-  	console.log(e.target)
     if(e.target.parentNode.id.indexOf("mydiv")!=-1){
     	new_elmnt=elmnt.cloneNode(true); // true means clone all childNodes and all event 
         new_elmnt.id="_"+index++;
@@ -85,7 +85,6 @@ function dragElement(elmnt) {
   }
 
   function closeDragElement(e) {
-  	console.log(e.target)
   	if(e.target.parentNode.id.indexOf("mydiv")!=-1){
       var top=new_elmnt.style.top;
       var left=new_elmnt.style.left;
