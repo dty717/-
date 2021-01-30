@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+        <style>
+            body {
+                display: -ms-flexbox;
+                display: -webkit-box;
+                display: flex;
+                -ms-flex-align: center;
+                -ms-flex-pack: center;
+                -webkit-box-align: center;
+                align-items: center;
+                -webkit-box-pack: center;
+                justify-content: center;
+                padding-top: 40px;
+                padding-bottom: 40px;
+                background-color: #f5f5f5;
+            }
+            #tip {
+                position: absolute;
+                /* display: none; */
+            }
+            canvas {} ​
+        </style>
+        <title>Hello, world!</title>
+
+
+    </head>
+
+    <body>
+
+        <div class="card text-center " id='content'>
+            <canvas width="1000" height="400" id="canvas"></canvas>
+            <span class="badge badge-primary" id="output"></span>
+            <div class="rgbShow" id="rgbShow">
+                &nbsp;&nbsp;&nbsp;
+            </div>
+            <button class="btn" id="stop">stop</button>
+            <div class="row">
+                <div class="col">
+                    <label for="maxValue">Max Value:</label>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" placeholder="max Value" id="maxValue"
+                    value="4" />
+                </div>
+                <div class="col">
+                    <label for="valueRange" id="valueLabel">value:2</label>
+                </div>
+                <div class="col">
+                </div>
+            </div>
+            <input type="range" class="custom-range" id="valueRange" step="0.001" />
+            <label for="speedRange" id="speedRangeLabel">speed:50</label>
+            <input type="range" class="custom-range" id="speedRange" step="0.001" />
+            <label for="speedRange" id="periodRangeLabel">period:50</label>
+            <input type="range" class="custom-range" id="periodRange" step="0.001" />
+        </div>
+
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+        <script>
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext('2d');
+            document.getElementById('maxValue').onchange = seriesSumChange
+            document.getElementById('valueRange').onchange = seriesSumChange
+            document.getElementById('speedRange').onchange = function(){
+                timeScale = this.value;
+                document.getElementById('speedRangeLabel').innerText =
+                    "speed:" + timeScale;
+                clearList()
+            }
+            
+            document.getElementById('periodRange').onchange = function(){
+                periodScale = this.value;
+                document.getElementById('periodRangeLabel').innerText =
+                    "period:" + periodScale;
+                clearList()
+            }
+            function clearList(){
+                list_x.length=0
+                list_y.length=0
+            }
+            
+            
+            document.getElementById('stop').onclick = function()
+            {
+                if (stop)
+                {
+                    stop = false;
+                    this.innerText = "stop";
+                }
+                else
+                {
+                    stop = true;
+                    this.innerText = "start";
+                }
+                
+            }
+
+            function seriesSumChange()
+            {
+                seriesSum = parseInt(document.getElementById('maxValue').value *document.getElementById('valueRange').value / 100);
+                if (seriesSum < 0)
+                {
+                    seriesSum = 1;
+                }
+                document.getElementById('valueLabel').innerText =
+                    "value:" + seriesSum;
+                clearList()
+            }
+            var O_radius = 50;
+            var O_point = {
+                x: 200,
+                y: 200
+            };
+            var point_radius = 2;
+
+            function drawCircle(point, radius, ctx)
+            {
+                ctx.strokeStyle = "white"
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI)
+                ctx.stroke()
+            }
+
+            function backgroundClear(ctx)
+            {
+                ctx.fillStyle = "black";
+                ctx.fillRect(0, 0, 1000, 400)
+            }
+            var list_x = [];
+            var list_y = [];
+
+            function drawLineAndPoint(point, θ, radius)
+            {
+                var x = point.x + radius * Math.cos(θ);
+                var y = point.y - radius * Math.sin(θ);
+                ctx.moveTo(point.x, point.y);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = 'white'
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(x, y, point_radius, 0, 2 * Math.PI);
+                ctx.fillStyle = "white"
+                ctx.fill();
+                return {
+                    x: x,
+                    y: y
+                };
+            }
+
+            var time = 0;
+            var timeScale = 20;
+            var periodScale=50;
+            var stop = false;
+            var seriesSum = 2;
+            setInterval(function()
+            {
+                if (stop)
+                {
+                    return;
+                }
+                backgroundClear(ctx);
+                var point = O_point;
+                var radius = O_radius;
+                for (var i = 0; i < seriesSum; i++)
+                {
+                    var n = 2*i + 1;
+                    var θ = n * time * timeScale;
+                    radius = 4/ (n * Math.PI) * O_radius;
+                    drawCircle(point, radius, ctx);
+                    point = drawLineAndPoint(point, θ, radius);
+                }
+                if (list_x.length > 2000)
+                {
+                    list_x.pop();
+                    list_y.pop();
+                }
+                else
+                {
+                    list_x.unshift(time * timeScale*periodScale);
+                    list_y.unshift(point.y);
+                }
+                lineTo(point, list_x, list_y);
+                time -= 0.001;
+            }, 10)
+
+            function lineTo(point, list_x, list_y)
+            {
+                if (list_x == undefined || list_x.length == 0)
+                    return;
+                ctx.beginPath();
+                ctx.moveTo(point.x, point.y);
+                for (var i = 1; i < list_x.length; i++)
+                {
+                    ctx.lineTo(list_x[i] - list_x[0] + 400, list_y[i]);
+                }
+                ctx.stroke();
+            }
+        </script>
+    </body>
+
+</html>

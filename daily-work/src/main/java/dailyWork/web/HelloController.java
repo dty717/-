@@ -1,6 +1,7 @@
 package dailyWork.web; 
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +16,7 @@ import java.awt.Graphics;
 
 @Controller
 public class HelloController {
- 
+
     @RequestMapping(value = { "/hello" ,"/Hello"})
     @ResponseBody
     public String example() {
@@ -32,6 +33,13 @@ public class HelloController {
         // response.addCookie(new Cookie("user", getUsername()));
         // image.put(name);
         return "Hello World!";
+    }
+    
+    @RequestMapping(value = "ip", method = RequestMethod.GET)
+    @ResponseBody
+    public String processData(HttpServletRequest request) {
+        System.out.println(request.getRemoteAddr());
+        return "Hello World";
     }
     
     @RequestMapping(value = { "get"},produces = "application/json;charset=utf-8")

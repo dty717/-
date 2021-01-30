@@ -25,6 +25,33 @@ class LeastSquares {
         return (this.ay*this.xx-this.xy*this.ax)/(this.xx*this.yy-this.xy*this.xy)
     }
 }
+class LeastSquares_2 {
+    constructor() {
+        this.xy = 0;
+        this.xx = 0;
+        this.yy = 0;
+        this.len=0;
+        this.x_sum=0;;
+        this.y_sum=0;
+    }
+    observe(x,y){
+        this.xy+=x*y;
+        this.xx+=x*x;
+        this.yy+=y*y;
+        this.x_sum+=x;
+        this.y_sum+=y;
+        this.len++;
+    }
+    //y=a+bx
+    caculateA(){
+        return (this.y_sum*this.xx-this.x_sum*this.xy)/(this.xx*this.len-this.x_sum*this.x_sum)
+    }
+    caculateB(){
+        return (this.len*this.xy-this.x_sum*this.y_sum)/(this.len*this.xx-this.x_sum*this.x_sum)
+    }
+}
+
+
 
 function test(x,y,ctx){
     var pixelData = ctx.getImageData(x, y, 1, 1).data;

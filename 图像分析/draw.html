@@ -1,0 +1,1109 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="/css/bootstrap.css" crossorigin="anonymous">
+        <script src="function/LeastSquares.js"></script>
+
+        <style>
+            body {
+                display: -ms-flexbox;
+                display: -webkit-box;
+                display: flex;
+                -ms-flex-align: center;
+                -ms-flex-pack: center;
+                -webkit-box-align: center;
+                align-items: center;
+                -webkit-box-pack: center;
+                justify-content: center;
+                padding-top: 40px;
+                padding-bottom: 40px;
+                background-color: #f5f5f5;
+            }
+            #tip {
+                position: absolute;
+                /* display: none; */
+            }
+            canvas , video {
+                cursor: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMDAwMDAwMEBAMFBQQFBQcGBgYGBwoHCAcIBwoPCgsKCgsKDw4QDQwNEA4YExERExgcGBYYHCIeHiIrKSs4OEv/wAALCAAFAAUBAREA/8QAMAABAAAAAAAAAAAAAAAAAAAABhAAAQIHAQAAAAAAAAAAAAAAAwQHAAECBQYREjL/2gAIAQEAAD8AMtU02WK8ud4IXevSUiW9UiKUVM+lNWyT7JsnqP/Z'), auto
+            }
+            ​
+        </style>
+        <title>图像识别</title>
+        
+    </head>
+
+    <body>
+
+        <div class="card text-center " id='content'>
+            <canvas id="canvas" style="z-index:1"></canvas>
+            <video playsinline autoplay style="margin-top:-150px;background-color:red;z-index:2"></video>
+            <span class="badge badge-primary" id="output"></span>
+            <div class="rgbShow" id="rgbShow">
+                &nbsp;&nbsp;&nbsp;
+            </div>
+            <button id="snapshot">Take snapshot</button>
+            <button id="stop">Stop</button>
+            <button id="start">Start</button>
+            <button id="save">Save</button>
+            <button id="background">Background</button>
+            <button id="loadSavedFile">LoadSavedFile</button>
+            <button id="compare">Compare</button>
+            <button id="getComparedValue">GetComparedValue</button>
+            <!--script(addButton:div)-->
+        </div>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="/js/common/jquery-3.3.1.min.js"></script>
+
+        
+        
+        <script type="text/javascript" charset="utf-8">
+            /*
+             *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+             *
+             *  Use of this source code is governed by a BSD-style license
+             *  that can be found in the LICENSE file in the root of the source
+             *  tree.
+             */
+
+            // Put variables in global scope to make them available to the browser console.
+            const video = document.querySelector('video');
+            const canvas = window.canvas = document.querySelector('canvas');
+            canvas.width = 480;
+            canvas.height = 360;
+
+            const button = document.querySelector('button#snapshot');
+            const buttonStart = document.querySelector('button#start');
+            const buttonStop = document.querySelector('button#stop');
+            const buttonSave = document.querySelector('button#save');
+            const buttonBackground = document.querySelector('button#background');
+            const buttonLoadSavedFile = document.querySelector('button#loadSavedFile');
+            const buttonCompare = document.querySelector('button#compare');
+            const buttonGetComparedValue = document.querySelector('button#getComparedValue');
+            //script(addButton:define)
+            /*
+            
+            set("finished","no");
+            var tem=`
+            button.click();
+            imageHandle.getSimilarData();
+            imageHandle.handleSimilarData();
+            set("output",imageHandle.output);
+            set("finished","yes");
+            console.log("ok",imageHandle.output)
+            `
+            updatejs(tem);
+            
+            */
+            
+            button.onclick = function()
+            {
+                // video.play();
+                // setTimeout(function()
+                // {
+                    canvas.style.zIndex = 3;
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    video.style.marginTop = -video.videoHeight + "px";
+                    ctx.drawImage(video, 0, 0,
+                        video.videoWidth,
+                        video.videoHeight);
+                    // video.pause();
+                // }, 200);
+            };
+            buttonStart.onclick = function()
+            {
+                canvas.style.zIndex = 1;
+                video.play();
+            }
+            buttonStop.onclick = function()
+            {
+                video.pause();
+            }
+            buttonSave.onclick = function()
+            {
+                ctx.drawImage(video, 0, 0,
+                        video.videoWidth,
+                        video.videoHeight);
+                
+                var formData=new FormData();
+                
+                formData.append("imgBase64",canvas.toDataURL())
+                $.ajax({
+                    url: '/imgBase64',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    async:false,
+                    success: function (response) {
+                        console.log(response);
+                    }
+                });
+                //ctx.strokeRect(startX, startY, rect_width, rect_height);
+            }
+            buttonBackground.onclick = function()
+            {
+                video.pause();
+                canvas.style.zIndex = 3;
+                $.ajax({
+                    url: '/background',
+                    method: "GET",
+                    data: {path:"C:\\Users\\xqy\\Desktop\\picture\\saved.png"},
+                    // enctype: 'multipart/form-data',
+                    //contentType:"application/x-javascript; charset:ISO-8859-1"
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    cache: false,
+                    async:false,
+                    success: function (response) {
+                        var img = new Image();
+                        img.onload = function(){
+                            ctx.drawImage(img,0,0); // Or at whatever offset you like
+                        };
+                        img.src = "/C:/Users/xqy/Desktop/picture/background.png?r="+Math.random();
+                    }
+                });
+            }
+            buttonLoadSavedFile.onclick = function()
+            {
+                video.pause();
+                canvas.style.zIndex = 3;
+                var img = new Image();
+                img.onload = function(){
+                    ctx.drawImage(img,0,0); // Or at whatever offset you like
+                };
+                img.src = "/C:/Users/xqy/Desktop/picture/saved.png?r="+Math.random();
+            }
+            buttonCompare.onclick =function()
+            {
+                ctx.drawImage(video, 0, 0,
+                        canvas.width,
+                        canvas.height);
+                
+                var formData=new FormData();
+                
+                formData.append("imgBase64",canvas.toDataURL())
+                $.ajax({
+                    url: '/compare',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    async:false,
+                    error:function(e){
+                        console.log(e);  
+                    },
+                    success: function (response) {
+                        var img = new Image();
+                        img.onload = function(){
+                            ctx.drawImage(img,0,0); // Or at whatever offset you like
+                            //ctx.strokeRect(startX, startY, rect_width, rect_height);
+                        };
+                        img.src = "/C:/Users/xqy/Desktop/picture/compare.png?r="+Math.random();
+                    }
+                });
+                
+            }
+            buttonGetComparedValue.onclick = function()
+            {
+                if(!((rect_width-2)&&(rect_height-2))){
+                    return;
+                }
+            	var pixelData = ctx.getImageData(startX+1, startY+1, rect_width-2, rect_height-2).data;
+                var count=0;
+                for (var i = 0; i < pixelData.length; i+=4) {
+                    if(pixelData[i]==255&&(pixelData[i+1]==0)&&(pixelData[i+2]==0)){
+                        count++;
+                    }
+                }
+                var comparedValue=count/((rect_height-2)*(rect_width-2));
+            	console.log(comparedValue);
+                $.ajax({
+                    url: '/topic/device',
+                    method: "GET",
+                    async: false,
+                    data:{content:comparedValue},
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    cache: false,
+                    success: function (response) {
+                        console.log(response);
+                    }
+                });
+            }
+            //script(addButton:event)
+            
+
+            video.onplay = function(e)
+            {
+                
+            }
+
+            const constraints = {
+                audio: false,
+                video: true
+            };
+
+            function handleSuccess(stream)
+            {
+                window.stream = stream; // make stream available to browser console
+                video.srcObject = stream;
+                
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                video.style.marginTop = -video.videoHeight + "px";
+            }
+
+            function handleError(error)
+            {
+                console.log('navigator.getUserMedia error: ', error);
+            }
+
+            navigator.mediaDevices.getUserMedia(constraints).then(
+                handleSuccess).catch(handleError);
+
+
+            // get references to the canvas and context
+            var ctx = canvas.getContext("2d");
+
+            // style the context
+            ctx.strokeStyle = "blue";
+            ctx.lineWidth = 3;
+
+            // calculate where the canvas is on the window
+            // (used to help calculate mouseX/mouseY)
+            var $canvas = $("#canvas");
+            var canvasOffset = $canvas.offset();
+            var offsetX = canvasOffset.left;
+            var offsetY = canvasOffset.top;
+            var rect_width,rect_height;
+            var scrollX = $canvas.scrollLeft();
+            var scrollY = $canvas.scrollTop();
+
+            // this flage is true when the user is dragging the mouse
+            var isDown = false;
+
+            // these vars will hold the starting mouse position
+            var startX;
+            var startY;
+
+            var oldImage=new Image();
+            
+            function handleMouseDown(e)
+            {
+                e.preventDefault();
+                e.stopPropagation();
+                canvasOffset = $canvas.offset();
+                offsetX = canvasOffset.left;
+                offsetY = canvasOffset.top;
+                // save the starting x/y of the rectangle
+                startX = parseInt(e.clientX - offsetX+$(document).scrollLeft());
+                startY = parseInt(e.clientY - offsetY+$(document).scrollTop());
+
+                oldImage.src=canvas.toDataURL("image/png");
+                // set a flag indicating the drag has begun
+                isDown = true;
+            }
+
+            function handleMouseUp(e)
+            {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // the drag is over, clear the dragging flag
+                isDown = false;
+            }
+
+            function handleMouseOut(e)
+            {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // the drag is over, clear the dragging flag
+                isDown = false;
+            }
+
+            function handleMouseMove(e)
+            {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // if we're not dragging, just return
+                if (!isDown)
+                {
+                    return;
+                }
+
+                // get the current mouse position
+                mouseX = parseInt(e.clientX - offsetX+$(document).scrollLeft());
+                mouseY = parseInt(e.clientY - offsetY+$(document).scrollTop());
+
+                // Put your mousemove stuff here
+                
+                ctx.drawImage(oldImage, 0, 0,
+                        canvas.width,
+                        canvas.height);
+                
+                // calculate the rectangle width/height based
+                // on starting vs current mouse position
+                rect_width = mouseX - startX;
+                rect_height = mouseY - startY;
+
+                // draw a new rect from the start position 
+                // to the current mouse position
+                ctx.strokeRect(startX, startY, rect_width, rect_height);
+                imageHandle.addSelectedArea(startX, startY, rect_width, rect_height);
+
+            }
+            
+            // listen for mouse events
+            $("#canvas").mousedown(function(e)
+            {
+                handleMouseDown(e);
+            });
+            
+            $("#canvas").mousemove(function(e)
+            {
+                var pixelData = ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
+                $('#output').html('R: ' + pixelData[0] + '    G: ' + pixelData[1] + '    B: ' + pixelData[2] + '    A: ' + pixelData[3]);
+                $("#rgbShow").css("background-color", "rgb(" + pixelData[0] + "," + pixelData[1] + "," + pixelData[2] + ")");
+                handleMouseMove(e);
+            });
+            $("#canvas").mouseup(function(e)
+            {
+                handleMouseUp(e);
+            });
+            $("#canvas").mouseout(function(e)
+            {
+                handleMouseOut(e);
+            });
+            
+            $("#canvas").dblclick(function(e)
+            {
+                var pixelData = ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
+                imageHandle.addSamplePoint(pixelData[0],pixelData[1],pixelData[2],pixelData[3]);
+            });
+            
+            var ImageHandle=function(){
+                this.selectedArea={};
+                this.samplePoint={};
+                this.similarData=[];
+                this.dif=220;
+                this.sampleXCountMin=3;
+                // selectedArea={"startX":222,"startY":174,"rect_width":44,"rect_height":76}
+                // samplePoint={"R":241,"G":235,"B":230,"A":255}
+                
+            }
+            ImageHandle.prototype.addSelectedArea=function(startX, startY, rect_width, rect_height){
+                this.selectedArea={startX:startX, startY:startY, rect_width:rect_width, rect_height:rect_height};
+            }
+            
+            ImageHandle.prototype.addSamplePoint=function(R,G,B,A){
+                this.samplePoint={R:R,G:G,B:B,A:A}
+            }
+            var center
+            var r;
+            ImageHandle.prototype.getCenterAndR=function(){
+                if(this.similarData.length){
+                    var minYPoint;
+                    var maxYPoint;
+                    var minY=1000000;
+                    var maxY=0;
+                    this.similarData.forEach(function(e){
+                        if(e.y<minY){
+                            minY=e.y;
+                            minYPoint=e;
+                        }
+                        if(e.y>maxY){
+                            maxY=e.y;
+                            maxYPoint=e;
+                        }
+                    })
+                    r=Math.sqrt((maxYPoint.x-minYPoint.x)*(maxYPoint.x-minYPoint.x)
+                        +(maxYPoint.y-minYPoint.y)*(maxYPoint.y-minYPoint.y))/4;
+                    center={x:(maxYPoint.x+minYPoint.x)/2,y:(maxYPoint.y+minYPoint.y)/2};
+                }
+            }
+            
+            ImageHandle.prototype.getSimilarData=function(difVal){
+                difVal=parseInt(difVal)
+                if(!difVal){
+                    difVal=1000;
+                }
+                this.dif=difVal
+                ctx.fillStyle="red";
+                this.similarData=[]
+                for (var i = this.selectedArea.startX; i < this.selectedArea.startX+this.selectedArea.rect_width; i++) {
+                    for (var j = this.selectedArea.startY; j < this.selectedArea.startY+this.selectedArea.rect_height; j++) {
+                        var pixelData = ctx.getImageData(i, j, 1, 1).data;
+                        var dif=(pixelData[0]-this.samplePoint.R)*(pixelData[0]-this.samplePoint.R)+
+                            (pixelData[1]-this.samplePoint.G)*(pixelData[1]-this.samplePoint.G)+
+                            (pixelData[2]-this.samplePoint.B)*(pixelData[2]-this.samplePoint.B);
+                        if(this.dif<dif){
+                        }else{
+                            ctx.fillRect(i,j,1,1);
+                            this.similarData.push({x:i,y:j});
+                        }
+                    }
+                }
+            }
+            ImageHandle.prototype.getDifData=function(difVal){
+                difVal=parseInt(difVal)
+                if(!difVal){
+                    difVal=1000;
+                }
+                this.dif=difVal
+                ctx.fillStyle="red";
+                this.similarData=[]
+                for (var i = this.selectedArea.startX; i < this.selectedArea.startX+this.selectedArea.rect_width; i++) {
+                    for (var j = this.selectedArea.startY; j < this.selectedArea.startY+this.selectedArea.rect_height; j++) {
+                        var pixelData = ctx.getImageData(i, j, 1, 1).data;
+                        var dif=(pixelData[0]-this.samplePoint.R)*(pixelData[0]-this.samplePoint.R)+
+                            (pixelData[1]-this.samplePoint.G)*(pixelData[1]-this.samplePoint.G)+
+                            (pixelData[2]-this.samplePoint.B)*(pixelData[2]-this.samplePoint.B);
+                        if(this.dif>dif){
+                        }else{
+                            ctx.fillRect(i,j,1,1);
+                            this.similarData.push({x:i,y:j});
+                        }
+                    }
+                }
+            }
+            
+            ImageHandle.prototype.handleSimilarData=function(){
+                this.output=undefined;
+                var sampleXMin=this.similarData[0].x;
+                var sampleXMax=this.similarData[0].x;
+                for (var i = 0; i < this.similarData.length; i++) {
+                    if(this.similarData[i].x.sampleXMin){
+                        sampleXMin=this.similarData[i].x;
+                    }
+                    else if(this.similarData[i].x>sampleXMax){
+                        sampleXMax=this.similarData[i].x;
+                    }
+                }
+                var sampleX=sampleXMin;
+                while(sampleX<=sampleXMax){
+                    var sampleXCount=0;
+                    for (var i = 0; i < this.similarData.length; i++) {
+                        if(this.similarData[i].x==sampleX){
+                            sampleXCount++;
+                        }
+                    }
+                    if(sampleXCount>this.sampleXCountMin){
+                        ctx.fillRect(sampleX,0,3,1000);
+                        console.log(sampleX);
+                        this.output=sampleX;
+                        break;
+                    }
+                    sampleX++;
+                }
+                console.log(sampleXMin,sampleXMax)
+            }
+
+            var imageHandle=new ImageHandle();
+            index=2;
+            function lineTo(list_x, list_y) {
+                if (list_x == undefined || list_x.length == 0)
+                    return;
+                ctx.strokeStyle = colors[index++]//'white';
+                //ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath();
+                ctx.moveTo(list_x[0], list_y[0]);
+                for (var i = 1; i < list_x.length; i++) {
+                    if (isNaN(list_y[i])) {
+                        if (i + 1 >= list_x.length) {
+                            ctx.lineTo(list_x[0], list_y[0]);
+                        }
+                        // NaN --> NaN
+                        if (!isNaN(list_x[i])) {
+                            i++;
+                            ctx.moveTo(list_x[i] + list_x[i - 1], list_y[i]);
+                            ctx.arc(list_x[i], list_y[i], list_x[i - 1], 0, 7)
+                        } else if (!isNaN(list_y[i + 1])) {
+                            i++;
+                            ctx.moveTo(list_x[i], list_y[i]);
+                        }
+                    } else {
+                        ctx.lineTo(list_x[i], list_y[i]);
+                    }
+                }
+                ctx.stroke();
+            }        
+        function makeFunction(fun){
+            var x=[]//[-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10];
+            var scale=100;
+            for(var i=0;i<=640;i++){
+                x[i]=i;
+            }
+            var y=[];
+            for(var i=0;i<=640;i++){
+                y.push(fun(x[i]));
+            }
+            //lineTo(x,y)
+            var _x=[]
+            var _y=[];
+            var max=0;
+            var max_x=0;
+            for(var i=0;i<=640;i++){
+                if(y[i]!=undefined&&(!isNaN(y[i]))&&(isFinite(y[i]))){
+                    _x.push(x[i]);
+                    _y.push(y[i]);
+                    if(y[i]>max){
+                        max=y[i];
+                        max_x=x[i];
+                    }
+                }
+            }
+            //console.log(_x,_y)
+            lineTo(_x,_y);
+        }
+        function test(a,b){
+            return function(x){
+                return a+b*x;
+            }
+            // return 16*x/((x+1)*(x+1));
+        }
+        function test2(a,b){
+            return function(x){
+                return (x-a)/b;
+            }
+            // return 16*x/((x+1)*(x+1));
+        }
+        function test3(k,a,b){
+            return function(x){
+                return k*(x-a)+b;
+            }
+            // return 16*x/((x+1)*(x+1));
+        }
+        
+        var centerLine = function(tan_k, center, r,debugShow) {
+            var sin_k = Math.sin(Math.atan(tan_k))
+            var cos_k = Math.cos(Math.atan(tan_k))
+            //console.log(-1 / tan_k, center.x + r * cos_k, center.y + r * sin_k);
+            //console.log(-1 / tan_k, center.x - r * cos_k, center.y - r * sin_k);
+            //makeFunction(test3(-1 / tan_k, center.x + r * cos_k, center.y + r * sin_k))
+            //makeFunction(test3(-1 / tan_k, center.x - r * cos_k, center.y - r * sin_k))
+            //(center.x+r*cos_k,center.y+r*sin_k)  -1/tan_k
+            //(center.x-r*cos_k,center.y-r*sin_k)  -1/tan_k
+            var sumNum = 20;
+            var rightTimes=0;
+            if (tan_k > 1 || (tan_k < -1)) {
+                if(sin_k<0){
+                    for (var i = -sumNum; i < sumNum; i++) {
+                        if(i==-3){
+                            i=3;
+                        }
+                        var y = -1 / tan_k*(i) + center.y + r * sin_k;
+                        var y_ = -1 / tan_k*(i) + center.y - r * sin_k;
+                        //console.log(i + (center.x + r * cos_k),y)
+                        var pix=ctx.getImageData(i + (center.x + r * cos_k),y,1,1).data;
+                        var pix_=ctx.getImageData(i + (center.x - r * cos_k),y_,1,1).data;
+                        if((pix[0]+pix[1]+pix[2])>(pix_[0]+pix_[1]+pix_[2])){
+                            rightTimes++;
+                        }else{
+                            rightTimes--
+                        }
+                        if(debugShow){
+                            ctx.fillStyle='red';
+                            ctx.fillRect(i + (center.x + r * cos_k),y,1,1)    
+                            ctx.fillRect(i + (center.x - r * cos_k),y_,1,1)    
+                        }
+                        
+                    }
+                }else{
+                    for (var i = -sumNum; i < sumNum; i++) {
+                        if(i==-3){
+                            i=3;
+                        }
+                        var y = -1 / tan_k*(i) + center.y - r * sin_k;
+                        var y_ = -1 / tan_k*(i) + center.y + r * sin_k;
+                        //console.log(i + (center.x + r * cos_k),y)
+                        var pix=ctx.getImageData(i + (center.x - r * cos_k),y,1,1).data;
+                        var pix_=ctx.getImageData(i + (center.x - r * cos_k),y_,1,1).data;
+                        if((pix[0]+pix[1]+pix[2])>(pix_[0]+pix_[1]+pix_[2])){
+                            rightTimes++;
+                        }else{
+                            rightTimes--
+                        }
+                        if(debugShow){
+                            ctx.fillStyle='red';
+                            ctx.fillRect(i + (center.x - r * cos_k),y,1,1)
+                            ctx.fillRect(i + (center.x + r * cos_k),y_,1,1)
+                        }
+                    }
+                    
+                }
+                
+            }else{
+                for (var i = -sumNum; i < sumNum; i++) {
+                    if(i==-3){
+                        i=3;
+                    }
+                    var x=-tan_k*(i)+(center.x + r * cos_k);
+                    var x_=-tan_k*(i)+(center.x - r * cos_k);
+                    // console.log(x,i+center.y + r * sin_k)
+                    var pix=ctx.getImageData(x,i+center.y + r * sin_k,1,1).data;
+                    var pix_=ctx.getImageData(x_,i+center.y - r * sin_k,1,1).data;
+                    if((pix[0]+pix[1]+pix[2])>(pix_[0]+pix_[1]+pix_[2])){
+                        rightTimes++;
+                    }else{
+                        rightTimes--
+                    }
+                    // console.log(test3(-1 / tan_k, center.x + r * cos_k, center.y + r * sin_k)(x,i+center.y + r * sin_k))
+                    if(debugShow){
+                        ctx.fillStyle='red';
+                        ctx.fillRect(x,i+center.y + r * sin_k,1,1)
+                        ctx.fillRect(x_,i+center.y - r * sin_k,1,1)
+                    }
+                }
+            }
+            if (rightTimes > 0) {
+                return "negative"
+            } else {
+                return "positive"
+            }
+        }
+        var _url=""
+        function get(obj) {
+            var val;
+            $.ajax({
+                url: _url+'/get',
+                method: "GET",
+                data: {
+                    name: obj
+                },
+                // enctype: 'multipart/form-data',
+                //contentType:"application/x-javascript; charset:ISO-8859-1"
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                cache: false,
+                async: false,
+                success: function(response) {
+                    val = response;
+                }
+            });
+            return val;
+        }
+        function set(keyVal, value) {
+            var key;
+            if (value != undefined) {
+                key = keyVal;
+                keyVal = value
+            } else {
+                var keys = Object.keys(window);
+                for (var i = keys.length - 1; i >= 0; i--) {
+                    if (window[keys[i]] == keyVal) {
+                        key = keys[i];
+                        break;
+                    }
+                }
+            }
+            var val;
+            var formData = new FormData()
+            formData.append("name", key)
+            if (keyVal instanceof Function) {
+                formData.append("value", JSON.stringify(keyVal.toString()));
+            } else {
+                formData.append("value", JSON.stringify(keyVal));
+            }
+            $.ajax({
+                url: _url+'/set',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                method: 'POST',
+                type: 'POST', // For jQuery < 1.9
+                async: false,
+                success: function(response) {
+                    val = response;
+                }
+            });
+            /*        $.ajax({
+                        url: root+"/set?name="+key+"&value="+encodeURI(JSON.stringify(keyVal)),
+                        method: "GET",
+                        // data: formData,
+                        // enctype: 'multipart/form-data',
+                        //contentType:"application/x-javascript; charset:ISO-8859-1"
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "text",
+                        cache: false,
+                        async:false,
+                        success: function (response) {
+                            val=response;
+                        }
+                    });
+            */
+            return val;
+        }
+        
+        
+        //makeFunction(test());
+            
+            /*
+            var list=[];
+            
+            var difVal=2000
+            var changeVal=18;
+            //document.getElementById('snapshot').click()
+            imageHandle.getSimilarData(difVal)
+            ls2=new  LeastSquares_2()
+            var xArrange=new Set();
+            imageHandle.similarData.forEach(function(e){
+                //if(e.x>306&&(e.x<309))
+                ls2.observe(e.x,e.y);
+                //xArrange.add(e.x);
+            })
+            var a1=ls2.caculateA();
+            var b1=ls2.caculateB()
+            ls2=new  LeastSquares_2()
+            imageHandle.similarData.forEach(function(e){
+                ls2.observe(e.y,e.x) 
+            })
+            var a2=ls2.caculateA();
+            var b2=ls2.caculateB()
+            if(b1>b2){
+                makeFunction(test2(a2,b2))
+            }else{
+                makeFunction(test(a1,b1))
+            }
+            
+            //list.push(ls2.caculateB())
+            // if(imageHandle.similarData.length/xArrange.size<changeVal){
+            //     makeFunction(test(ls2.caculateA(),ls2.caculateB()))
+            // }else{
+            //     makeFunction(test2(ls2.caculateA(),ls2.caculateB()))
+            //     ls2=new  LeastSquares_2()
+            //     imageHandle.similarData.forEach(function(e){
+            //         ls2.observe(e.y,e.x) 
+            //     })
+            //     makeFunction(test2(ls2.caculateA(),ls2.caculateB()))
+            // }
+            
+            list.push({a:ls2.caculateA(),b:ls2.caculateB()})
+            
+            var beforePort={};
+            var _a = setInterval(() => {
+                p = gg(1800, 10);
+                console.log(getPort(p.a, p.b, centerLine(p.b, {
+                    x: center.x,
+                    y: center.y
+                }, r)))
+                var port = getPort(p.a, p.b, centerLine(p.b, {
+                    x: center.x,
+                    y: center.y
+                }, r), true);
+                if (port != beforePort) {
+                    set('port', port);
+                    beforePort = port;
+                }
+            }, 500)
+            */
+            function gg(difVal, changeVal) {
+                document.getElementById('snapshot').click()
+                imageHandle.getSimilarData(difVal)
+                ls2 = new LeastSquares_2()
+                var xArrange = new Set();
+                imageHandle.similarData.forEach(function(e) {
+                    //if(e.x>306&&(e.x<309))
+                    ls2.observe(e.x, e.y);
+                    //xArrange.add(e.x);
+                })
+                var a1 = ls2.caculateA();
+                var b1 = ls2.caculateB()
+                ls2 = new LeastSquares_2()
+                imageHandle.similarData.forEach(function(e) {
+                    ls2.observe(e.y, e.x)
+                })
+                var a2 = ls2.caculateA();
+                var b2 = ls2.caculateB()
+                if (Math.abs(b1) > Math.abs(b2)) {
+                    makeFunction(test2(a2, b2))
+                    return {a:-a2/b2,b:1/b2};
+                    
+                    test2
+                } else {
+                    makeFunction(test(a1, b1))
+                    return {a:a1,b:b1};
+                }
+
+            }            
+
+            var port = [{
+                "a": -603.2107099285041,
+                "b": 2.868576100100994,
+                "type": "negative"
+            }, {
+                "a": -4609.085213070574,
+                "b": 17.200798383021727,
+                "type": "negative"
+            }, {
+                "a": 618.5680675682175,
+                "b": -1.5007574524031362,
+                "type": "negative"
+            }, {
+                "a": 371.86626091317333,
+                "b": -0.6175559494609555,
+                "type": "negative"
+            }, {
+                "a": 115.68573064703189,
+                "b": 0.2969568156109672,
+                "type": "negative"
+            }, {
+                "a": -225.90172689474684,
+                "b": 1.5215421074813695,
+                "type": "positive"
+            }, {
+                "a": 35968.62839782539,
+                "b": -128.86024944035816,
+                "type": "positive"
+            }, {
+                "a": 644.1658252813664,
+                "b": -1.5961677979917042,
+                "type": "positive"
+            }, {
+                "a": 298.72066485881595,
+                "b": -0.36013977784751294,
+                "type": "positive"
+            }, {
+                "a": 96.44929399862123,
+                "b": 0.3619115652037272,
+                "type": "positive"
+            }, {
+                "a": -223.5342237095694,
+                "b": 1.5062879543747736,
+                "type": "negative"
+            }]            // var port = [{
+            //     "a": -1395.8089896257354,
+            //     "b": 4.207700323754043,
+            //     "type": "negative"
+            // }, {
+            //     "a": -14597.882111161744,
+            //     "b": 41.214611691880116,
+            //     "type": "negative"
+            // }, {
+            //     "a": 666.5092353992037,
+            //     "b": -1.565723054629093,
+            //     "type": "negative"
+            // }, {
+            //     "a": 198.47124241561892,
+            //     "b": -0.2524173904049913,
+            //     "type": "negative"
+            // }, {
+            //     "a": -34.740731601853085,
+            //     "b": 0.3993329239373845,
+            //     "type": "negative"
+            // }, {
+            //     "a": -515.3547852873393,
+            //     "b": 1.7457264586183285,
+            //     "type": "positive"
+            // }, {
+            //     "a": 4577.1055155632575,
+            //     "b": -12.596148863121073,
+            //     "type": "positive"
+            // }, {
+            //     "a": 590.991872626732,
+            //     "b": -1.35529596408227,
+            //     "type": "positive"
+            // }, {
+            //     "a": 200.35721030033957,
+            //     "b": -0.26286968304158154,
+            //     "type": "positive"
+            // }, {
+            //     "a": -26.480870948353235,
+            //     "b": 0.37192842811064397,
+            //     "type": "positive"
+            // }, {
+            //     "a": -466.82436305425017,
+            //     "b": 1.6053680994287278,
+            //     "type": "negative"
+            // }]            
+            
+            function getPort(a,b,type,notSwitch){
+                var min=Infinity;
+                var minVal=0;
+                console.log(type)
+                port.forEach(function(e,index){
+                    if(e.type!=type){
+                        return;
+                    }
+                    var e_b=e.b;
+                    var _b=b;
+                    if(e.b>1||e.b<-1){
+                        e_b=1/e_b;
+                        _b=1/_b;
+                    }
+                    if(min>(e_b-_b)*(e_b-_b)){
+                        min=(e_b-_b)*(e_b-_b)
+                        minVal=index
+                    }
+                })
+                console.log(minVal)
+                if(!notSwitch){
+                    switch(parseInt(minVal)){
+        				case Liquid_Hg:            return "Hg掩蔽剂";
+        				case Empty_Air2:           return "空气2";
+        				case Liquid_Cr:            return "Cr氧化剂";
+        				case Liquid_Cr_High:           return "Cr高浓度氧化剂";
+        				case Liquid_Ag:            return "Ag催化剂";
+        				case Water_Out:            return "输出口";
+        				case Liquid_Waste:         return "废液口";
+        				case Water_Samples:        return "水样口";
+        				case Empty_Air9:           return "空气9";
+        				case Liquid_I:             return "指示剂I";
+        				case Rst_Valve1:             return "V1复位";			
+        				default:                     console.log("error:"+SendBuf[3+i]);
+         			}
+                }
+     			//325, 165
+                return minVal;
+            }
+    Liquid_Hg = 1,                      //Hg掩蔽剂  
+	Empty_Air2 = 2,                     //空气2  
+	Liquid_Cr = 3,                      //Cr氧化剂
+	Liquid_Cr_High = 4,                     //空气4
+	Liquid_Ag = 5,                      //Ag催化剂
+	Water_Out = 6,                      //输出口
+	Liquid_Waste = 7,                   //废液口
+	Empty_Air9 = 8,                     //空气9
+	Water_Samples = 9,                  //水样口
+	Liquid_I = 10                       //I
+    Rst_Valve1=0;
+            /*
+            
+            imageHandle.samplePoint={R: 12, G: 11, B: 14, A: 255}
+            imageHandle.selectedArea={startX: 242, startY: 137, rect_width: 93, rect_height: 110}
+            imageHandle.getDifData(4000)
+            imageHandle.handleSimilarData()
+            var outA=imageHandle.output;
+            imageHandle.selectedArea={startX: 274, startY: 153, rect_width: 30, rect_height: 28}
+            imageHandle.samplePoint={R: 232, G: 210, B: 209, A: 255}
+            imageHandle.getSimilarData(4000)
+            imageHandle.handleSimilarData()
+            var outB=imageHandle.output;
+            
+            $.ajax({
+                url: '/background',
+                method: "GET",
+                data: {path:"C:\\Users\\xqy\\Desktop\\picture\\saved.png"},
+                // enctype: 'multipart/form-data',
+                //contentType:"application/x-javascript; charset:ISO-8859-1"
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                cache: false,
+                async:false,
+                success: function (response) {
+                    val=response;
+                }
+            });
+            undefined;
+            
+            $.ajax({
+                url: '/setPicR',
+                method: "GET",
+                data: {picR:"5"},
+                // enctype: 'multipart/form-data',
+                //contentType:"application/x-javascript; charset:ISO-8859-1"
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                cache: false,
+                async:false,
+                success: function (response) {
+                    val=response;
+                }
+            });
+            undefined;
+            
+            */
+            var Util=function(){
+                this.name='Util';
+            }
+            Util.prototype.detectLine = function(difVal) {
+                difVal=parseInt(difVal)
+                if(!difVal){
+                    difVal=1000;
+                }
+                var x = startX;
+                var y = startY;
+                var width = rect_width;
+                var height = rect_height;
+                var groups = [];
+                var datas = ctx.getImageData(x, y, width, height);
+                for (var i = 0; i < datas.data.length; i += 4) {
+                    var r = datas.data[i];
+                    var g = datas.data[i + 1];
+                    var b = datas.data[i + 2];
+                    var inGruop = false;
+                    for (var j = 0; j < groups.length; j++) {
+                        var dif = (groups[j].r - r) * (groups[j].r - r) + (groups[j].g - g) * (groups[j].g - g) + (groups[j].b - b) * (groups[j].b - b);
+                        if (dif>difVal) {
+                        }else{
+                            inGruop=true;
+                            groups[j].list.push(i);
+                        }
+                    }
+                    if(!inGruop){
+                        groups.push({r:r,g:g,b:b,list:[]});
+                    }
+                }
+                return groups;
+            }
+            var colors = ['red', 'green', 'blue', 'yello', 'black','white'];
+            
+            Util.prototype.drawByGroup = function(postion, groups) {
+                var colors = ['red', 'green', 'blue', 'yello', 'black','white'];
+                for (var j = 0; j < groups.length; j++) {
+                    ctx.fillStyle=colors[j];
+                    for (var k=0; k < groups[j].list.length; k++) {
+                        var pos = groups[j].list[k]
+                        ctx.fillRect(postion.x+(pos/4)%postion.width, postion.y+(pos/4)/postion.height, 1, 1);
+                        //console.log(postion.x+pos%postion.width, postion.y+pos/postion.height,colors[j]);
+                    }
+                }
+            }
+            Util.prototype.getSimilarData = function(_r, _g, _b, difVal) {
+                difVal = parseInt(difVal)
+                if (!difVal) {
+                    difVal = 1000;
+                }
+                var x = startX;
+                var y = startY;
+                var width = rect_width;
+                var height = rect_height;
+                var groups = [{
+                    r: _r,
+                    g: _g,
+                    b: _b,
+                    list: []
+                }];
+                var datas = ctx.getImageData(x, y, width, height);
+                for (var i = 0; i < datas.data.length; i += 4) {
+                    var r = datas.data[i];
+                    var g = datas.data[i + 1];
+                    var b = datas.data[i + 2];
+                    var dif = (groups[0].r - r) * (groups[0].r - r) + (groups[0].g - g) * (groups[0].g - g) + (groups[0].b - b) * (groups[0].b - b);
+                    if (dif > difVal) {} else {
+                        inGruop = true;
+                        groups[0].list.push(i);
+                    }
+                }
+                return groups;
+            }            
+            
+            function _pos(){
+                return {x:startX,y:startY,width:rect_width,height:rect_height};
+            }
+            var util=new Util();
+        </script>
+    </body>
+
+</html>

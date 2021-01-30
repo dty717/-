@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title></title>
+        <style type="text/css" media="all">
+            .center_div{
+                /*width: 50hv;*/
+                height: 300px;
+                margin: auto;
+                border: solid ;
+            }
+        </style>
+    </head>
+    <body>
+        
+        <div width="60%" height="100%" class="center_div" id="center_div_id">
+            
+        </div>
+        <script type="text/javascript" charset="utf-8">
+            var list=[];
+            var x_before=0;
+            var y_before=0;
+            
+            document.getElementById('center_div_id').onmousemove=function(e){
+                if(x_before<e.clientX){
+                    list.push({x:e.clientX,y:310-e.clientY})
+                }
+                x_before=e.clientX;
+            }
+        </script>
+        
+        
+    </body>
+</html>

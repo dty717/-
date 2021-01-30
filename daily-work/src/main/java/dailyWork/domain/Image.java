@@ -19,13 +19,20 @@ import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.Core;
+import org.opencv.core.Point;
 import org.opencv.core.MatOfRect;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
 import org.opencv.videoio.VideoCapture;
+
+import org.bytedeco.javacpp.*;
+import static org.bytedeco.javacpp.lept.*;
+import static org.bytedeco.javacpp.tesseract.*;
 
 
 @Component
@@ -34,7 +41,39 @@ public class Image {
     static{
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         System.out.println(Core.NATIVE_LIBRARY_NAME);
+        System.out.println(Imgproc.RETR_TREE+","+Imgproc.CHAIN_APPROX_SIMPLE);
     }
+    
+    List<Rect> detectLetters(Mat img)
+    {
+        List<Rect> boundRect=new ArrayList();
+        Mat img_gray = new Mat();
+        Mat img_sobel = new Mat();
+        Mat img_threshold  = new Mat();
+        Mat element = new Mat();
+        Imgproc.cvtColor(img, img_gray, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.Sobel(img_gray, img_sobel, CvType.CV_8U, 1, 0, 3, 1, 0, Core.BORDER_DEFAULT);
+        Imgproc.threshold(img_sobel, img_threshold, 0, 255, Imgproc.THRESH_OTSU+Imgproc.THRESH_BINARY);
+        element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(17, 3) );
+        Imgproc.morphologyEx(img_threshold, img_threshold, Imgproc.MORPH_CLOSE, element); //Does the trick
+        List<MatOfPoint> contours=new ArrayList<MatOfPoint>();
+        
+        Imgproc.findContours(img_threshold, contours, new Mat(), 0,1);
+
+        MatOfPoint2f[] contours_poly=new MatOfPoint2f[contours.size()];
+        for( int i = 0; i < contours.size(); i++ ){
+            if (contours.get(i).toList().size()>100)
+            {
+                contours_poly[i]=new MatOfPoint2f();
+                Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contours_poly[i], 3, true );
+                Rect appRect=Imgproc.boundingRect(new MatOfPoint2f(contours_poly[i]));
+                if (appRect.width>appRect.height) 
+                    boundRect.add(appRect);
+            }
+        }
+        return boundRect;
+    }
+    
     @PostConstruct
     public void init() {
         // nu.pattern.OpenCV.loadShared();
@@ -63,6 +102,37 @@ public class Image {
 		Imgcodecs.imwrite("C:/Users/xqy/Pictures/123-gray.jpg", image);
 		System.out.println("Done!");
         test=new HashMap<>();
+        
+        //Read
+        Mat img1=Imgcodecs.imread("C:/Users/xqy/Pictures/saved1.png");
+        //Detect
+        List<Rect> letterBBoxes1=detectLetters(img1);
+        //Display
+        for(int i=0; i< letterBBoxes1.size(); i++){
+            Imgproc.rectangle(img1,letterBBoxes1.get(i),new Scalar(0,255,0),3,8,0);
+        }
+        Imgcodecs.imwrite("C:/Users/xqy/Pictures/abc.png", img1);  
+        
+        BytePointer outText;
+
+        TessBaseAPI api = new TessBaseAPI();
+        // Initialize tesseract-ocr with English, without specifying tessdata path
+        if (api.Init(null, "eng") != 0) {
+            System.err.println("Could not initialize tesseract.");
+            System.exit(1);
+        }
+
+        // Open input image with leptonica library
+        PIX imagePIX = pixRead("C:/Users/xqy/Pictures/saved1.png");
+        api.SetImage(imagePIX);
+        // Get OCR result
+        outText = api.GetUTF8Text();
+        System.out.println("OCR output:\n" + outText.getString());
+
+        // Destroy used object and release memory
+        api.End();
+        outText.deallocate();
+        pixDestroy(imagePIX);
     }
     private int absoluteFaceSize;
     private CascadeClassifier faceCascade;

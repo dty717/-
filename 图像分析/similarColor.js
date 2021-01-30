@@ -20,7 +20,6 @@ class similarColor {
 
     closeArea(ctx,x,y){
         this.area(ctx,x-100,x+100,y-100,y+100)
-
     }
     
     // Getter

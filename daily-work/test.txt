@@ -1,0 +1,63 @@
+[INFO] Error stacktraces are turned on.
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.delin.infoSystem:dailyWork:war:0.0.1
+[WARNING] 'dependencies.dependency.systemPath' for org.openpnp:opencv:jar should use a variable instead of a hard-coded path C:/Users/xqy/Desktop/projects/OpenCV/opencv/build/java/opencv-410.jar @ line 41, column 21
+[WARNING] 'build.pluginManagement.plugins.plugin.(groupId:artifactId)' must be unique but found duplicate declaration of plugin org.apache.maven.plugins:maven-surefire-plugin @ line 297, column 17
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[WARNING] The POM for org.apache.maven.plugins:maven-surefire-plugin:jar:4.1.0-0 is missing, no dependency information available
+[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-surefire-plugin:4.1.0-0: Plugin org.apache.maven.plugins:maven-surefire-plugin:4.1.0-0 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-surefire-plugin:jar:4.1.0-0 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building dailyWork Maven Webapp 0.0.1
+[INFO] ------------------------------------------------------------------------
+[WARNING] The POM for org.apache.maven.plugins:maven-surefire-plugin:jar:4.1.0-0 is missing, no dependency information available
+[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-surefire-plugin:4.1.0-0: Plugin org.apache.maven.plugins:maven-surefire-plugin:4.1.0-0 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-surefire-plugin:jar:4.1.0-0 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
+[INFO] 
+[INFO] >>> tomcat7-maven-plugin:2.2:run (default-cli) > process-classes @ dailyWork >>>
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.2:resources (default-resources) @ dailyWork ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 0 resource to dailyWork/mapper
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:compile (default-compile) @ dailyWork ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] <<< tomcat7-maven-plugin:2.2:run (default-cli) < process-classes @ dailyWork <<<
+[INFO] 
+[INFO] 
+[INFO] --- tomcat7-maven-plugin:2.2:run (default-cli) @ dailyWork ---
+[INFO] Running war on http://localhost:8099/
+[INFO] Using existing Tomcat server configuration at C:\Users\xqy\Desktop\新建工程\自动化作业\代码\生产过程分析\auto-work\daily-work\target\tomcat
+[INFO] create webapp with contextPath: 
+一月 15, 2020 2:39:00 上午 org.apache.coyote.AbstractProtocol init
+信息: Initializing ProtocolHandler ["http-bio-8099"]
+一月 15, 2020 2:39:00 上午 org.apache.catalina.core.StandardService startInternal
+信息: Starting service Tomcat
+一月 15, 2020 2:39:00 上午 org.apache.catalina.core.StandardEngine startInternal
+信息: Starting Servlet Engine: Apache Tomcat/7.0.47
+一月 15, 2020 2:39:04 上午 org.apache.catalina.core.ApplicationContext log
+信息: No Spring WebApplicationInitializer types detected on classpath
+一月 15, 2020 2:39:04 上午 org.apache.catalina.core.ApplicationContext log
+信息: Initializing Spring root WebApplicationContext
+[INFO] Root WebApplicationContext: initialization started
+[INFO] Spring Security 'config' module version is 5.1.0.RELEASE
+[INFO] Creating access control expression attribute 'permitAll' for /login
+[INFO] Creating access control expression attribute 'hasIpAddress('192.168.0.0/16') or hasIpAddress('127.0.0.1/32') or hasRole('ROLE_USER')' for /**
+[INFO] Checking sorted filter chain: [Root bean: class [org.springframework.security.web.context.SecurityContextPersistenceFilter]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null, order = 200, Root bean: class [org.springframework.security.web.session.ConcurrentSessionFilter]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null, order = 300, Root bean: class [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null, order = 400, Root bean: class [org.springframework.security.web.header.HeaderWriterFilter]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null, order = 500, Root bean: class [org.springframework.security.web.authentication.logout.LogoutFilter]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null, order = 800, <org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter#0>, order = 1200, Root bean: class [org.springframework.security.web.authentication.www.BasicAuthenticationFilter]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null, order = 1800, Root bean: class [org.springframework.security.web.savedrequest.RequestCacheAwareFilter]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null, order = 1900, Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.security.config.http.HttpConfigurationBuilder$SecurityContextHolderAwareRequestFilterBeanFactory#0; factoryMethodName=getBean; initMethodName=null; destroyMethodName=null, order = 2000, Root bean: class [org.springframework.security.web.authentication.AnonymousAuthenticationFilter]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null, order = 2300, Root bean: class [org.springframework.security.web.session.SessionManagementFilter]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null, order = 2400, Root bean: class [org.springframework.security.web.access.ExceptionTranslationFilter]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null, order = 2500, <org.springframework.security.web.access.intercept.FilterSecurityInterceptor#0>, order = 2600]
+[INFO] Expressions were enabled for method security but no SecurityExpressionHandler was configured. All hasPermision() expressions will evaluate to false.
+opencv_java410
+3,2
+[INFO] Creating filter chain: any request, [org.springframework.security.web.context.SecurityContextPersistenceFilter@2aca69, org.springframework.security.web.session.ConcurrentSessionFilter@6eed4, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@db019e, org.springframework.security.web.header.HeaderWriterFilter@d0bd70, org.springframework.security.web.authentication.logout.LogoutFilter@494781, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@13a6412, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@1b55f1a, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@34f21, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@d4722f, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@f68f53, org.springframework.security.web.session.SessionManagementFilter@1a25958, org.springframework.security.web.access.ExceptionTranslationFilter@1fc738a, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@862f90]
+[INFO] Checking whether login URL '/login' is accessible with your configuration
+[INFO] Root WebApplicationContext initialized in 1924 ms
+一月 15, 2020 2:39:06 上午 org.apache.catalina.core.ApplicationContext log
+信息: Initializing Spring DispatcherServlet 'dispatcher'
+[INFO] Initializing Servlet 'dispatcher'
+[INFO] Completed initialization in 27 ms
+一月 15, 2020 2:39:06 上午 org.apache.coyote.AbstractProtocol start
+信息: Starting ProtocolHandler ["http-bio-8099"]
